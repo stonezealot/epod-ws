@@ -43,4 +43,14 @@ public class ProcedureServicePostgres
 
 		return new ProcedureResponse(ERR_CODE_OK, "");
 	}
+
+	@Override
+	public ProcedureResponse setTrucknoteStatus(
+			final String charset,
+			final BigDecimal trucknoteRecKey,
+			final String trucknoteStatus,
+			final String userId) {
+
+		return new ProcedureResponse(ERR_CODE_OK, "");
+	}
 }

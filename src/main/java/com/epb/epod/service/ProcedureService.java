@@ -26,5 +26,11 @@ public interface ProcedureService {
 			BigDecimal trucknotelineRecKey,
 			String userId);
 
+	ProcedureResponse setTrucknoteStatus(
+			String charset,
+			BigDecimal trucknoteRecKey,
+			String trucknoteStatus,
+			String userId);
+
 	static final String ERR_CODE_OK = "OK";
 }

@@ -28,6 +28,7 @@ import com.epb.epod.bean.AddTrucknotePayload;
 import com.epb.epod.bean.AddTrucknotelinePayload;
 import com.epb.epod.bean.DelTrucknotelinePayload;
 import com.epb.epod.bean.Master;
+import com.epb.epod.bean.SetTrucknoteStatusPayload;
 import com.epb.epod.entity.Podmas;
 import com.epb.epod.entity.Truckmas;
 import com.epb.epod.entity.TrucknoteEpod;
@@ -135,6 +136,24 @@ public class AppController {
 		}
 
 		return this.getTrucknotelines(payload.getTrucknoteRecKey());
+	}
+
+	@PostMapping("/set-trucknote-status")
+	public ResponseEntity<List<TrucknoteEpod>> setTrucknoteStatus(
+			@RequestBody final SetTrucknoteStatusPayload payload) {
+
+		final ProcedureResponse response = this.procedureService
+				.setTrucknoteStatus(
+						"",
+						payload.getTrucknoteRecKey(),
+						payload.getTrucknoteStatus(),
+						payload.getUserId());
+
+		if (!ProcedureService.ERR_CODE_OK.equals(response.getErrCode())) {
+			throw new RuntimeException(response.getErrMsg());
+		}
+
+		return this.getTrucknotes(payload.getUserId());
 	}
 
 	//
