@@ -24,13 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.epb.epod.bean.AddTrucknotePayload;
 import com.epb.epod.bean.Master;
 import com.epb.epod.entity.Podmas;
 import com.epb.epod.entity.Truckmas;
 import com.epb.epod.entity.TrucknoteEpod;
+import com.epb.epod.entity.Trucknoteline;
 import com.epb.epod.repository.PodmasRepository;
 import com.epb.epod.repository.TruckmasRepository;
 import com.epb.epod.repository.TrucknoteEpodRepository;
+import com.epb.epod.repository.TrucknotelineRepository;
 import com.epb.epod.service.ProcedureResponse;
 import com.epb.epod.service.ProcedureService;
 
@@ -60,10 +63,40 @@ public class AppController {
 	public ResponseEntity<List<TrucknoteEpod>> getTrucknote(
 			@RequestParam final String userId) {
 
-		final List<TrucknoteEpod> trucknoteEpods = this.trucknoteEpodRepository
+		final List<TrucknoteEpod> trucknoteEpod = this.trucknoteEpodRepository
 				.findByUserIdOrderByDocId(userId);
 
-		return ResponseEntity.ok(trucknoteEpods);
+		return ResponseEntity.ok(trucknoteEpod);
+	}
+
+	@PostMapping("/add-trucknote")
+	public ResponseEntity<List<TrucknoteEpod>> addTrucknote(
+			@RequestBody final AddTrucknotePayload payload) {
+
+		final ProcedureResponse response = this.procedureService
+				.addTrucknote(
+						"",
+						payload.getOrgId(),
+						payload.getLocId(),
+						payload.getTruckId(),
+						payload.getUserId(),
+						payload.getRemark());
+
+		if (!ProcedureService.ERR_CODE_OK.equals(response.getErrCode())) {
+			throw new RuntimeException(response.getErrMsg());
+		}
+
+		return this.getTrucknote(payload.getUserId());
+	}
+
+	@GetMapping("/trucknotelines")
+	public ResponseEntity<List<Trucknoteline>> getTrucknotelines(
+			@RequestParam final BigDecimal masRecKey) {
+
+		final List<Trucknoteline> trucknotelines = this.trucknotelineRepository
+				.findByMasRecKeyOrderByLineNo(masRecKey);
+
+		return ResponseEntity.ok(trucknotelines);
 	}
 
 	//
@@ -81,6 +114,7 @@ public class AppController {
 	private final TruckmasRepository truckmasRepository;
 	private final PodmasRepository podmasRepository;
 	private final TrucknoteEpodRepository trucknoteEpodRepository;
+	private final TrucknotelineRepository trucknotelineRepository;
 
 	private final ProcedureService procedureService;
 
@@ -98,7 +132,8 @@ public class AppController {
 			final ProcedureService procedureService,
 			final TruckmasRepository truckmasRepository,
 			final PodmasRepository podmasRepository,
-			final TrucknoteEpodRepository trucknoteEpodRepository) {
+			final TrucknoteEpodRepository trucknoteEpodRepository,
+			final TrucknotelineRepository trucknotelineRepository) {
 
 		super();
 
@@ -107,6 +142,7 @@ public class AppController {
 		this.truckmasRepository = truckmasRepository;
 		this.podmasRepository = podmasRepository;
 		this.trucknoteEpodRepository = trucknoteEpodRepository;
+		this.trucknotelineRepository = trucknotelineRepository;
 
 		this.procedureService = procedureService;
 
