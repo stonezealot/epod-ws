@@ -33,4 +33,14 @@ public class ProcedureServicePostgres
 
 		return new ProcedureResponse(ERR_CODE_OK, "");
 	}
+
+	@Override
+	public ProcedureResponse delTrucknoteline(
+			final String charset,
+			final BigDecimal trucknoteRecKey,
+			final BigDecimal trucknotelineRecKey,
+			final String userId) {
+
+		return new ProcedureResponse(ERR_CODE_OK, "");
+	}
 }

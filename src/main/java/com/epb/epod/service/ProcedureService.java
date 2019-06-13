@@ -19,6 +19,12 @@ public interface ProcedureService {
 			BigDecimal trucknoteRecKey,
 			String documentBarcode,
 			String userId);
-	
+
+	ProcedureResponse delTrucknoteline(
+			String charset,
+			BigDecimal trucknoteRecKey,
+			BigDecimal trucknotelineRecKey,
+			String userId);
+
 	static final String ERR_CODE_OK = "OK";
 }

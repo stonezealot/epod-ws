@@ -71,6 +71,31 @@ public class ProcedureServiceOracle
 
 		return response;
 	}
+
+	@Override
+	public ProcedureResponse delTrucknoteline(
+			final String charset,
+			final BigDecimal trucknoteRecKey,
+			final BigDecimal trucknotelineRecKey,
+			final String userId) {
+
+		final SqlParameterSource in = new MapSqlParameterSource()
+				.addValue("v_charset", "")
+				.addValue("v_trucknote_rec_key", trucknoteRecKey)
+				.addValue("v_trucknoteline_rec_key", trucknotelineRecKey)
+				.addValue("v_user_id", userId);
+
+		final Map<String, Object> out = this.delTrucknotelineCall.execute(in);
+		if (!ERR_CODE_OK.equals((String) out.get("v_err_code"))) {
+			throw new RuntimeException((String) out.get("v_err_msg"));
+		}
+
+		final ProcedureResponse response = new ProcedureResponse(
+				(String) out.get("v_err_code"),
+				(String) out.get("v_err_msg"));
+
+		return response;
+	}
 	//
 	// fields
 	//
@@ -79,6 +104,7 @@ public class ProcedureServiceOracle
 
 	private final SimpleJdbcCall addTrucknoteCall;
 	private final SimpleJdbcCall addTrucknotelineCall;
+	private final SimpleJdbcCall delTrucknotelineCall;
 
 	//
 	// constructor
@@ -89,13 +115,17 @@ public class ProcedureServiceOracle
 		super();
 		this.jdbcTemplate = jdbcTemplate;
 		this.jdbcTemplate.setResultsMapCaseInsensitive(true);
-
-		this.addTrucknotelineCall = new SimpleJdbcCall(this.jdbcTemplate)
-				.withCatalogName("ep_trucknote")
-				.withProcedureName("add_trucknoteline");
+		
 		this.addTrucknoteCall = new SimpleJdbcCall(this.jdbcTemplate)
 				.withCatalogName("ep_trucknote")
 				.withProcedureName("add_trucknote");
+		this.addTrucknotelineCall = new SimpleJdbcCall(this.jdbcTemplate)
+				.withCatalogName("ep_trucknote")
+				.withProcedureName("add_trucknoteline");
+		this.delTrucknotelineCall = new SimpleJdbcCall(this.jdbcTemplate)
+				.withCatalogName("ep_trucknote")
+				.withProcedureName("del_trucknoteline");
+
 
 	}
 
