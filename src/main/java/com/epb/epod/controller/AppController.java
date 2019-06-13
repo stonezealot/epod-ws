@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epb.epod.bean.AddTrucknotePayload;
+import com.epb.epod.bean.AddTrucknotelinePayload;
 import com.epb.epod.bean.Master;
 import com.epb.epod.entity.Podmas;
 import com.epb.epod.entity.Truckmas;
@@ -59,14 +60,14 @@ public class AppController {
 						truckmas, podmas));
 	}
 
-	@GetMapping("/trucknote")
-	public ResponseEntity<List<TrucknoteEpod>> getTrucknote(
+	@GetMapping("/trucknotes")
+	public ResponseEntity<List<TrucknoteEpod>> getTrucknotes(
 			@RequestParam final String userId) {
 
-		final List<TrucknoteEpod> trucknoteEpod = this.trucknoteEpodRepository
+		final List<TrucknoteEpod> trucknoteEpods = this.trucknoteEpodRepository
 				.findByUserIdOrderByDocId(userId);
 
-		return ResponseEntity.ok(trucknoteEpod);
+		return ResponseEntity.ok(trucknoteEpods);
 	}
 
 	@PostMapping("/add-trucknote")
@@ -86,7 +87,7 @@ public class AppController {
 			throw new RuntimeException(response.getErrMsg());
 		}
 
-		return this.getTrucknote(payload.getUserId());
+		return this.getTrucknotes(payload.getUserId());
 	}
 
 	@GetMapping("/trucknotelines")
@@ -97,6 +98,24 @@ public class AppController {
 				.findByMasRecKeyOrderByLineNo(masRecKey);
 
 		return ResponseEntity.ok(trucknotelines);
+	}
+
+	@PostMapping("/add-trucknoteline")
+	public ResponseEntity<List<Trucknoteline>> addTrucknoteline(
+			@RequestBody final AddTrucknotelinePayload payload) {
+
+		final ProcedureResponse response = this.procedureService
+				.addTrucknoteline(
+						"",
+						payload.getTrucknoteRecKey(),
+						payload.getDocumentBarcode(),
+						payload.getUserId());
+
+		if (!ProcedureService.ERR_CODE_OK.equals(response.getErrCode())) {
+			throw new RuntimeException(response.getErrMsg());
+		}
+
+		return this.getTrucknotelines(payload.getTrucknoteRecKey());
 	}
 
 	//

@@ -19,6 +19,6 @@ public interface ProcedureService {
 			BigDecimal trucknoteRecKey,
 			String documentBarcode,
 			String userId);
-
+	
 	static final String ERR_CODE_OK = "OK";
 }
