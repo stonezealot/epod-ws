@@ -27,8 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.epb.epod.bean.Master;
 import com.epb.epod.entity.Podmas;
 import com.epb.epod.entity.Truckmas;
+import com.epb.epod.entity.TrucknoteEpod;
 import com.epb.epod.repository.PodmasRepository;
 import com.epb.epod.repository.TruckmasRepository;
+import com.epb.epod.repository.TrucknoteEpodRepository;
 import com.epb.epod.service.ProcedureResponse;
 import com.epb.epod.service.ProcedureService;
 
@@ -44,14 +46,24 @@ public class AppController {
 	public ResponseEntity<Master> getMaster() {
 
 		final List<Truckmas> truckmas = this.truckmasRepository
-				.findAll();
+				.findAll(Sort.by("truckId"));
 
 		final List<Podmas> podmas = this.podmasRepository
-				.findAll();
+				.findAll(Sort.by("podId"));
 
 		return ResponseEntity.ok(
 				new Master(
 						truckmas, podmas));
+	}
+
+	@GetMapping("/trucknote")
+	public ResponseEntity<List<TrucknoteEpod>> getTrucknote(
+			@RequestParam final String userId) {
+
+		final List<TrucknoteEpod> trucknoteEpods = this.trucknoteEpodRepository
+				.findByUserIdOrderByDocId(userId);
+
+		return ResponseEntity.ok(trucknoteEpods);
 	}
 
 	//
@@ -68,6 +80,7 @@ public class AppController {
 
 	private final TruckmasRepository truckmasRepository;
 	private final PodmasRepository podmasRepository;
+	private final TrucknoteEpodRepository trucknoteEpodRepository;
 
 	private final ProcedureService procedureService;
 
@@ -84,7 +97,8 @@ public class AppController {
 			final JdbcTemplate jdbcTemplate,
 			final ProcedureService procedureService,
 			final TruckmasRepository truckmasRepository,
-			final PodmasRepository podmasRepository) {
+			final PodmasRepository podmasRepository,
+			final TrucknoteEpodRepository trucknoteEpodRepository) {
 
 		super();
 
@@ -92,6 +106,7 @@ public class AppController {
 		this.jdbcTemplate.setResultsMapCaseInsensitive(true);
 		this.truckmasRepository = truckmasRepository;
 		this.podmasRepository = podmasRepository;
+		this.trucknoteEpodRepository = trucknoteEpodRepository;
 
 		this.procedureService = procedureService;
 
