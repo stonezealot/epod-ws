@@ -121,6 +121,37 @@ public class ProcedureServiceOracle
 
 		return response;
 	}
+
+	@Override
+	public ProcedureResponse setTrucknotelineStatus(
+			final String charset,
+			final BigDecimal trucknoteRecKey,
+			final BigDecimal trucknotelineRecKey,
+			final String deliveryStatus,
+			final String podId,
+			final String remark,
+			final String userId) {
+
+		final SqlParameterSource in = new MapSqlParameterSource()
+				.addValue("v_charset", "")
+				.addValue("v_trucknote_rec_key", trucknoteRecKey)
+				.addValue("v_trucknoteline_rec_key", trucknotelineRecKey)
+				.addValue("v_delivery_status", deliveryStatus)
+				.addValue("v_pod_id", podId)
+				.addValue("v_remark", remark)
+				.addValue("v_user_id", userId);
+
+		final Map<String, Object> out = this.setTrucknotelineStatusCall.execute(in);
+		if (!ERR_CODE_OK.equals((String) out.get("v_err_code"))) {
+			throw new RuntimeException((String) out.get("v_err_msg"));
+		}
+
+		final ProcedureResponse response = new ProcedureResponse(
+				(String) out.get("v_err_code"),
+				(String) out.get("v_err_msg"));
+
+		return response;
+	}
 	//
 	// fields
 	//
@@ -131,6 +162,7 @@ public class ProcedureServiceOracle
 	private final SimpleJdbcCall addTrucknotelineCall;
 	private final SimpleJdbcCall delTrucknotelineCall;
 	private final SimpleJdbcCall setTrucknoteStatusCall;
+	private final SimpleJdbcCall setTrucknotelineStatusCall;
 
 	//
 	// constructor
@@ -154,6 +186,9 @@ public class ProcedureServiceOracle
 		this.setTrucknoteStatusCall = new SimpleJdbcCall(this.jdbcTemplate)
 				.withCatalogName("ep_trucknote")
 				.withProcedureName("set_trucknote_status");
+		this.setTrucknotelineStatusCall = new SimpleJdbcCall(this.jdbcTemplate)
+				.withCatalogName("ep_trucknote")
+				.withProcedureName("set_trucknoteline_status");
 
 	}
 
